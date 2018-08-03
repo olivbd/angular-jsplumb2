@@ -1,5 +1,5 @@
 /* global describe:true, beforeEach:true, afterEach:true, it:true, expect: true */
-describe("ovh-angular-jsplumb", function () {
+describe("angular-jsplumb2", function () {
     "use strict";
 
     var $compile;
@@ -7,7 +7,7 @@ describe("ovh-angular-jsplumb", function () {
     var elem;
 
     beforeEach(angular.mock.module("ngSanitize"));
-    beforeEach(angular.mock.module("ovh-angular-jsplumb"));
+    beforeEach(angular.mock.module("angular-jsplumb2"));
 
     beforeEach(angular.mock.inject(function (_$rootScope_, _$compile_) {
         $scope = _$rootScope_.$new();

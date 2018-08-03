@@ -18,7 +18,7 @@ module.exports = function (config) {
             "bower_components/angular-mocks/angular-mocks.js",
             "bower_components/jquery-ui/jquery-ui.js",
             "bower_components/jsplumb/dist/js/jquery.jsPlumb-1.7.4.js",
-            "src/ovh-angular-jsplumb.js",
+            "src/angular-jsplumb2.js",
             "src/**/*.js"
         ],
 

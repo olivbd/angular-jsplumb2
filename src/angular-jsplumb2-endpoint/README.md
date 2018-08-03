@@ -10,7 +10,7 @@ Create a jsplumb endpoint on element (source and/or target). See [elements as so
 
 ## How it works ?
 
-`jsplumbEndpoint` requires [`jsplumbInstance`](https://jsplumbtoolkit.com/community/apidocs/classes/jsPlumbInstance.html) directive to work. `ovh-angular-jsplumb` only use makeSource and makeTarget (see [elements as sources & targets](https://jsplumbtoolkit.com/community/doc/connections.html#sourcesandtargets) for more informations) to create endpoints. So if you don't provide `source` or `target` options, `jsplumbEndpoint` won't do anything.
+`jsplumbEndpoint` requires [`jsplumbInstance`](https://jsplumbtoolkit.com/community/apidocs/classes/jsPlumbInstance.html) directive to work. `angular-jsplumb2` only use makeSource and makeTarget (see [elements as sources & targets](https://jsplumbtoolkit.com/community/doc/connections.html#sourcesandtargets) for more informations) to create endpoints. So if you don't provide `source` or `target` options, `jsplumbEndpoint` won't do anything.
 
 By default `jsplumbInstance` will create connections provided on endpoint creation. The if you want to add or remove new connections, simply update `jsplumb-endpoint-connection-ids` list and connections will be added or removed by directive.
 

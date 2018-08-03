@@ -1,10 +1,6 @@
-# ovh-angular-jsplumb
+# angular-jsplumb2
 
-![githubbanner](https://user-images.githubusercontent.com/3379410/27423240-3f944bc4-5731-11e7-87bb-3ff603aff8a7.png)
-
-[![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)]() [![Chat on gitter](https://img.shields.io/gitter/room/ovh/ux.svg)](https://gitter.im/ovh/ux) [![Build Status](https://travis-ci.org/ovh-ux/ovh-angular-jsplumb.svg)](https://travis-ci.org/ovh-ux/ovh-angular-jsplumb)
-
-[![NPM](https://nodei.co/npm/ovh-angular-jsplumb.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/ovh-angular-jsplumb/)
+[![NPM](https://nodei.co/npm/angular-jsplumb2.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/angular-jsplumb2/)
 
 > Allow to draw links between elements using [jsPlumb toolkit](http://www.jsplumb.org/).
 
@@ -17,34 +13,34 @@
 
 ### Bower
 ```sh
-bower install ovh-angular-jsplumb --save
+bower install angular-jsplumb2 --save
 ```
 
 ### NPM
 ```sh
-npm install ovh-angular-jsplumb --save
+npm install angular-jsplumb2 --save
 ```
 
-Then include ovh-angular-jsplumb.js in your HTML with it's dependencies (**Note** : As mentionned above, you can only load jquery ui dependency files) :
+Then include angular-jsplumb2.js in your HTML with it's dependencies (**Note** : As mentionned above, you can only load jquery ui dependency files) :
 
 ```html
 <script src="jquery.js"></script>
 <script src="jquery-ui.js"></script>
 <script src="jsplumb.js"></script>
 <script src="angular.js"></script>
-<script src="ovh-angular-jsplumb.js"></script>
+<script src="angular-jsplumb2.js"></script>
 ```
 
 And then load the module in your application by adding it as a dependent module:
 
 ```js
-angular.module('app', ['ovh-angular-jsplumb']);
+angular.module('app', ['angular-jsplumb2']);
 ```
 
 ### Get the sources
 ```sh
-git clone https://github.com/ovh-ux/ovh-angular-jsplumb.git
-cd ovh-angular-jsplumb
+git clone https://github.com/olivbd/angular-jsplumb2.git
+cd angular-jsplumb2
 npm install
 bower install
 ```
@@ -52,7 +48,7 @@ bower install
 You've developed a new cool feature? Fixed an annoying bug? We'd be happy
 to hear from you!
 
-Have a look in [CONTRIBUTING.md](https://github.com/ovh-ux/ovh-angular-jsplumb/blob/master/CONTRIBUTING.md)
+Have a look in [CONTRIBUTING.md](https://github.com/olivbd/angular-jsplumb2/blob/master/CONTRIBUTING.md)
 
 
 ## Dependencies
@@ -66,7 +62,7 @@ If you are using grunt and grunt wiredep, overrides the jsPlumb dependency like 
 wiredep: {
     overrides: {
         jsplumb: {
-            main: 'dist/js/jquery.jsPlumb-1.7.3-min.js'
+            main: 'dist/js/jsplumb.min.js'
         },
         'jquery-ui': {
             main: [
@@ -97,7 +93,7 @@ angular.module('app').controller('myAppCtrl', function ($scope, jsPlumbService) 
 });
 ```
 
-Create an instance of `ovh-angular-jsplumb` with the `jsplumbInstance` directive:
+Create an instance of `angular-jsplumb2` with the `jsplumbInstance` directive:
 
 ```html
 <div data-ng-if="jsplumbReady"
@@ -123,11 +119,11 @@ grunt ngdocs
 
 ## Related links
 
- * Contribute: https://github.com/ovh-ux/ovh-angular-jsplumb/CONTRIBUTING.md
- * Report bugs: https://github.com/ovh-ux/ovh-angular-jsplumb/issues
- * Get latest version: https://github.com/ovh-ux/ovh-angular-jsplumb
+ * Contribute: https://github.com/olivbd/angular-jsplumb2/CONTRIBUTING.md
+ * Report bugs: https://github.com/olivbd/angular-jsplumb2/issues
+ * Get latest version: https://github.com/olivbd/angular-jsplumb2
 
 
 ## License
 
-See https://github.com/ovh-ux/ovh-angular-jsplumb/blob/master/LICENSE
+See https://github.com/olivbd/angular-jsplumb2/blob/master/LICENSE

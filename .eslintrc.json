@@ -1,12 +1,17 @@
 {
-    "extends": "./node_modules/eslint-config-ovh/configs/es5-browser.js",
-    "globals": {
-        "jsPlumb": true,
-        "module": true,
-        "require": true
-    },
-    "rules": {
-        "no-magic-numbers": "off",
-        "no-param-reassign": "warn"
-    }
- }
+  "extends": "./node_modules/eslint-config-ovh/configs/es6-browser.js",
+  "globals": {
+    "jsPlumb": true,
+    "module": true,
+    "require": true
+  },
+  "rules": {
+    "indent": [
+      2,
+      "tab"
+    ],
+    "no-tabs": 0,
+    "no-magic-numbers": "off",
+    "no-param-reassign": "warn"
+  }
+}

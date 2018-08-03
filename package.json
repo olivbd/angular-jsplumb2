@@ -1,19 +1,19 @@
 {
-  "name": "ovh-angular-jsplumb",
-  "version": "3.0.5",
-  "description": "Allow to draw links between elements using [jsplumb toolkit](http://www.jsplumb.org/).",
+  "name": "angular-jsplumb2",
+  "version": "0.0.1",
+  "description": "Allow to draw links between elements using [jsPlumb 2.7.x](http://www.jsplumb.org/).",
   "scripts": {
     "test": "grunt test"
   },
   "license": "BSD-3-Clause",
-  "author": "OVH SAS",
-  "main": "./dist/ovh-angular-jsplumb.min.js",
-  "repository": "ovh-ux/ovh-angular-jsplumb",
+  "author": "Olivier Béraud",
+  "main": "./dist/angular-jsplumb2.min.js",
+  "repository": "olivbd/angular-jsplumb2",
   "devDependencies": {
+    "babel-eslint": "^8.2.6",
     "eslint": "^4.1.1",
     "eslint-config-ovh": "^0.1.1",
-    "grunt-eslint": "^20.0.0",
-    "grunt": "0.4.x",
+    "grunt": "^0.4.5",
     "grunt-autoprefixer": "~3.0.3",
     "grunt-bump": "~0.7.0",
     "grunt-complexity": "~0.3.0",
@@ -26,17 +26,23 @@
     "grunt-contrib-less": "~1.1.0",
     "grunt-contrib-uglify": "~0.11.0",
     "grunt-contrib-watch": "~0.6.1",
+    "grunt-eslint": "^20.2.0",
     "grunt-injector": "^0.6.0",
     "grunt-karma": "~0.12.1",
     "grunt-ng-annotate": "~1.0.1",
-    "grunt-ngdocs": "^0.2.5",
+    "grunt-ngdocs": "^0.2.11",
     "grunt-wiredep": "^2.0.0",
-    "jasmine-core": "^2.3.4",
+    "jasmine-core": "^2.99.1",
     "jasmine-spec-reporter": "^2.5.0",
     "karma": "~0.13.22",
     "karma-jasmine": "~0.3.0",
     "karma-phantomjs-launcher": "~1.0.1",
-    "phantomjs-prebuilt": "^2.1.11",
-    "matchdep": "^1.0.0"
+    "matchdep": "^1.0.0",
+    "phantomjs-prebuilt": "^2.1.16"
+  },
+  "dependencies": {
+    "contextify": "^1.0.0",
+    "grunt-bower-task": "^0.5.0",
+    "grunt-contrib-uglify-es": "github:gruntjs/grunt-contrib-uglify#harmony"
   }
 }

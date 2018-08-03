@@ -65,7 +65,7 @@ Is broadcasted by <code>$rootScope</code> when a connection has been clicked in 
 
 ## Some Magic
 
-It's not really magic but for better use of the `ovh-angular-jsplumb` component, some method have been added to `jsplumb` instance to extend it.
+It's not really magic but for better use of the `angular-jsplumb2` component, some method have been added to `jsplumb` instance to extend it.
 
 ### revalidateEverything
 
