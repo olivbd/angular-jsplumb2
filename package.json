@@ -7,7 +7,7 @@
   },
   "license": "BSD-3-Clause",
   "author": "Olivier Béraud",
-  "main": "./dist/angular-jsplumb2.min.js",
+  "main": "./dist/angular-jsplumb2.js",
   "repository": "olivbd/angular-jsplumb2",
   "devDependencies": {
     "babel-eslint": "^8.2.6",
