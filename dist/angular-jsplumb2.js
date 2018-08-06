@@ -454,8 +454,6 @@ angular.module("angular-jsplumb2")
 
 						$scope.instance = jsPlumb.getInstance(angular.extend(instanceOptions || {}, { Container: $element }));
 
-						console.log("instanceOptions", instanceOptions);
-
 						/*= ==============================================
 						=            Extend jsplumb instance            =
 						===============================================*/

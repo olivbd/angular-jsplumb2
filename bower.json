@@ -1,7 +1,7 @@
 {
   "name": "angular-jsplumb2",
   "description": "Allow to draw links between elements using [jsPlumb 2.7.x](http://www.jsplumb.org/).",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "main": "./dist/angular-jsplumb2.js",
   "license": "BSD-3-Clause",
   "author": "Olivier Béraud",
