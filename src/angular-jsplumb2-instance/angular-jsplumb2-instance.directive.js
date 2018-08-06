@@ -71,6 +71,8 @@ angular.module("angular-jsplumb2")
 
 						$scope.instance = jsPlumb.getInstance(angular.extend(instanceOptions || {}, { Container: $element }));
 
+						console.log("instanceOptions", instanceOptions);
+
 						/*= ==============================================
 						=            Extend jsplumb instance            =
 						===============================================*/
@@ -131,7 +133,7 @@ angular.module("angular-jsplumb2")
 							$rootScope.$broadcast("jsplumb.instance.connection.mouseout", info, $scope.instance, originalEvent);
 						});
 
-						$scope.instance.bind("beforeDrop", (info) => jsplumbInstanceCtrl.connectionExists(info.sourceId, info.targetId) ? null : info.connection);
+						$scope.instance.bind("beforeDrop", (info) => instanceOptions.DuplicateConnectionsAllowed && jsplumbInstanceCtrl.connectionExists(info.sourceId, info.targetId) ? null : info.connection);
 
 						$scope.instance.bind("click", (connection, originalEvent) => {
 							$rootScope.$broadcast("jsplumb.instance.connection.click", connection, $scope.instance, originalEvent);

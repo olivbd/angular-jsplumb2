@@ -124,7 +124,8 @@ angular.module("angular-jsplumb2-test", [
 						}
 					]
 				],
-				Container: angular.element(".schema-editor").get(0)
+				Container: angular.element(".schema-editor").get(0),
+				DuplicateConnectionsAllowed: true
 			}
 		};
 
