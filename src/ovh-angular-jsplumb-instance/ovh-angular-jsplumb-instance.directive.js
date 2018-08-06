@@ -131,7 +131,7 @@ angular.module("ovh-angular-jsplumb").directive("jsplumbInstance", function ($ro
                     });
 
                     $scope.instance.bind("beforeDrop", function (info) {
-                        return jsplumbInstanceCtrl.connectionExists(info.sourceId, info.targetId) ? null : info.connection;
+                        return !instanceOptions.DuplicateConnectionsAllowed && jsplumbInstanceCtrl.connectionExists(info.sourceId, info.targetId) ? null : info.connection;
                     });
 
                     $scope.instance.bind("click", function (connection, originalEvent) {

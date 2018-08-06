@@ -1,7 +1,7 @@
 {
   "name": "ovh-angular-jsplumb",
   "description": "",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "main": "./dist/ovh-angular-jsplumb.min.js",
   "license": "BSD-3-Clause",
   "author": "OVH SAS",

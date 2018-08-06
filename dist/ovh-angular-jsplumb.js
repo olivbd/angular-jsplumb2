@@ -521,7 +521,7 @@ angular.module("ovh-angular-jsplumb").directive("jsplumbInstance", ["$rootScope"
                     });
 
                     $scope.instance.bind("beforeDrop", function (info) {
-                        return jsplumbInstanceCtrl.connectionExists(info.sourceId, info.targetId) ? null : info.connection;
+                        return !instanceOptions.DuplicateConnectionsAllowed && jsplumbInstanceCtrl.connectionExists(info.sourceId, info.targetId) ? null : info.connection;
                     });
 
                     $scope.instance.bind("click", function (connection, originalEvent) {
@@ -556,14 +556,13 @@ angular.module("ovh-angular-jsplumb").directive("jsplumbInstance", ["$rootScope"
  *
  * Main service
  */
-angular.module("ovh-angular-jsplumb").service("jsPlumbService",
-                                              ["$q", function ($q) {
+angular.module("ovh-angular-jsplumb").service("jsPlumbService", ["$q", function ($q) {
 
-                                                  "use strict";
+    "use strict";
 
-                                                  var initDeferred = $q.defer();
+    var initDeferred = $q.defer();
 
-                                                  /**
+    /**
          * @ngdoc function
          * @name jsplumbInit
          * @methodOf ovh-angular-jsplumb.jsPlumbService
@@ -572,15 +571,15 @@ angular.module("ovh-angular-jsplumb").service("jsPlumbService",
          * Initialize jsPlumb
          *
          */
-                                                  this.jsplumbInit = function () {
-                                                      jsPlumb.ready(function () {
-                                                          initDeferred.resolve();
-                                                      });
+    this.jsplumbInit = function () {
+        jsPlumb.ready(function () {
+            initDeferred.resolve();
+        });
 
-                                                      return initDeferred.promise;
-                                                  };
+        return initDeferred.promise;
+    };
 
-                                                  /**
+    /**
          * @ngdoc function
          * @name importDefaults
          * @methodOf ovh-angular-jsplumb.jsPlumbService
@@ -589,8 +588,8 @@ angular.module("ovh-angular-jsplumb").service("jsPlumbService",
          * Configure jsPlumb
          *
          */
-                                                  this.importDefaults = function (defaults) {
-                                                      jsPlumb.importDefaults(defaults);
-                                                  };
-                                              }]
+    this.importDefaults = function (defaults) {
+        jsPlumb.importDefaults(defaults);
+    };
+}]
 );
