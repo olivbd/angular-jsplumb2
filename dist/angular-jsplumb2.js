@@ -434,109 +434,114 @@ angular.module("angular-jsplumb2")
     </file>
  </example>
  */
-angular.module("angular-jsplumb2").directive("jsplumbInstance", ($rootScope, $parse) => {
+angular.module("angular-jsplumb2")
+	.directive("jsplumbInstance", ($rootScope, $parse) => {
 
-	"use strict";
+		"use strict";
 
-	return {
-		restrict: "A",
-		scope: true,
-		controller: "jsplumbInstanceCtrl",
-		compile () {
-			return {
-				pre ($scope, $element, attr, jsplumbInstanceCtrl) {
+		return {
+			restrict: "A",
+			scope: true,
+			controller: "jsplumbInstanceCtrl",
+			compile () {
+				return {
+					pre ($scope, $element, attr, jsplumbInstanceCtrl) {
 
-					const instanceOptions = $parse(attr.jsplumbInstance)($scope);
+						const instanceOptions = $parse(attr.jsplumbInstance)($scope);
 
-					// add class to element
-					$element.addClass("_jsPlumb_ng_instance");
+						// add class to element
+						$element.addClass("_jsPlumb_ng_instance");
 
-					$scope.instance = jsPlumb.getInstance(angular.extend(instanceOptions || {}, { Container: $element }));
+						$scope.instance = jsPlumb.getInstance(angular.extend(instanceOptions || {}, { Container: $element }));
 
-					/*= ==============================================
-                    =            Extend jsplumb instance            =
-                    ===============================================*/
+						console.log("instanceOptions", instanceOptions);
 
-					/**
-                     *  Clears the offset and size cache of each endpoints end then repaints all connections.
-                     *  Useful when a connection is deleted and endpoints become empty. repaintEverything method does not repaint empty endpoints.
-                     */
-					$scope.instance.revalidateEverything = function () {
-						const self = this;
-						$("._jsPlumb_ng_endpoint").each((index, elem) => {
-							self.revalidate($(elem).attr("id"));
+						/*= ==============================================
+						=            Extend jsplumb instance            =
+						===============================================*/
+
+						/**
+						 *  Clears the offset and size cache of each endpoints end then repaints all connections.
+						 *  Useful when a connection is deleted and endpoints become empty. repaintEverything method does not repaint empty endpoints.
+						 */
+						$scope.instance.revalidateEverything = function () {
+							const self = this;
+							$("._jsPlumb_ng_endpoint")
+								.each((index, elem) => {
+									self.revalidate($(elem)
+										.attr("id"));
+								});
+						};
+
+						/**
+						 *  Make a connection between 2 endpoints
+						 */
+						$scope.instance.connectEndpoints = function (sourceId, targetId) {
+							return jsplumbInstanceCtrl.connectEndpoints(sourceId, targetId);
+						};
+
+						/**
+						 *  Delete a connection (or by give it source and target IDs)
+						 */
+						$scope.instance.disconnectEndpoints = function (sourceIdOrConnection, targetId) {
+							return jsplumbInstanceCtrl.disconnectEndpoints(sourceIdOrConnection, targetId);
+						};
+
+						/**
+						 *  Return a jsplumb connection object by providing a source endpoint id and target endpoint id.
+						 *  This method checks in both direction : from source to target or from target to source.
+						 */
+						$scope.instance.getConnectionBySourceIdAndTargetId = function (sourceId, targetId) {
+							return jsplumbInstanceCtrl.getConnection(sourceId, targetId);
+						};
+
+						/* -----  End of Extend jsplumb instance  ------*/
+
+						$rootScope.$broadcast("jsplumb.instance.created", $scope.instance);
+
+						$scope.instance.bind("connection", (info, originalEvent) => {
+							$rootScope.$broadcast("jsplumb.instance.connection", info.connection, info.sourceEndpoint, info.targetEndpoint, $scope.instance, originalEvent);
+
+							// call apply only if it's not a programmatically connection
+							if (originalEvent) {
+								$scope.$apply();
+							}
 						});
-					};
 
-					/**
-                     *  Make a connection between 2 endpoints
-                     */
-					$scope.instance.connectEndpoints = function (sourceId, targetId) {
-						return jsplumbInstanceCtrl.connectEndpoints(sourceId, targetId);
-					};
+						$scope.instance.bind("mouseover", (info, originalEvent) => {
+							$rootScope.$broadcast("jsplumb.instance.connection.mouseover", info, $scope.instance, originalEvent);
+						});
 
-					/**
-                     *  Delete a connection (or by give it source and target IDs)
-                     */
-					$scope.instance.disconnectEndpoints = function (sourceIdOrConnection, targetId) {
-						return jsplumbInstanceCtrl.disconnectEndpoints(sourceIdOrConnection, targetId);
-					};
+						$scope.instance.bind("mouseout", (info, originalEvent) => {
+							$rootScope.$broadcast("jsplumb.instance.connection.mouseout", info, $scope.instance, originalEvent);
+						});
 
-					/**
-                     *  Return a jsplumb connection object by providing a source endpoint id and target endpoint id.
-                     *  This method checks in both direction : from source to target or from target to source.
-                     */
-					$scope.instance.getConnectionBySourceIdAndTargetId = function (sourceId, targetId) {
-						return jsplumbInstanceCtrl.getConnection(sourceId, targetId);
-					};
+						$scope.instance.bind("beforeDrop", (info) => !instanceOptions.DuplicateConnectionsAllowed && jsplumbInstanceCtrl.connectionExists(info.sourceId, info.targetId) ? null : info.connection);
 
-					/* -----  End of Extend jsplumb instance  ------*/
+						$scope.instance.bind("click", (connection, originalEvent) => {
+							$rootScope.$broadcast("jsplumb.instance.connection.click", connection, $scope.instance, originalEvent);
 
-					$rootScope.$broadcast("jsplumb.instance.created", $scope.instance);
+							// call apply only if it's not a programmatically connection
+							if (originalEvent) {
+								$scope.$apply();
+							}
+						});
 
-					$scope.instance.bind("connection", (info, originalEvent) => {
-						$rootScope.$broadcast("jsplumb.instance.connection", info.connection, info.sourceEndpoint, info.targetEndpoint, $scope.instance, originalEvent);
+						$scope.instance.bind("connectionDetached", (info, originalEvent) => {
+							$rootScope.$broadcast("jsplumb.instance.connection.detached", info.connection, info.sourceEndpoint, info.targetEndpoint, $scope.instance, originalEvent);
 
-						// call apply only if it's not a programmatically connection
-						if (originalEvent) {
-							$scope.$apply();
-						}
-					});
+							// call apply only if it's not a programmatically connection
+							if (originalEvent) {
+								$scope.$apply();
+							}
+						});
 
-					$scope.instance.bind("mouseover", (info, originalEvent) => {
-						$rootScope.$broadcast("jsplumb.instance.connection.mouseover", info, $scope.instance, originalEvent);
-					});
+					}
+				};
+			}
+		};
 
-					$scope.instance.bind("mouseout", (info, originalEvent) => {
-						$rootScope.$broadcast("jsplumb.instance.connection.mouseout", info, $scope.instance, originalEvent);
-					});
-
-					$scope.instance.bind("beforeDrop", (info) => jsplumbInstanceCtrl.connectionExists(info.sourceId, info.targetId) ? null : info.connection);
-
-					$scope.instance.bind("click", (connection, originalEvent) => {
-						$rootScope.$broadcast("jsplumb.instance.connection.click", connection, $scope.instance, originalEvent);
-
-						// call apply only if it's not a programmatically connection
-						if (originalEvent) {
-							$scope.$apply();
-						}
-					});
-
-					$scope.instance.bind("connectionDetached", (info, originalEvent) => {
-						$rootScope.$broadcast("jsplumb.instance.connection.detached", info.connection, info.sourceEndpoint, info.targetEndpoint, $scope.instance, originalEvent);
-
-						// call apply only if it's not a programmatically connection
-						if (originalEvent) {
-							$scope.$apply();
-						}
-					});
-
-				}
-			};
-		}
-	};
-
-});
+	});
 
 /**
  * @ngdoc service
