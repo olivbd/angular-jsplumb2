@@ -1,10 +1,10 @@
 {
   "name": "ovh-angular-jsplumb",
   "description": "",
-  "version": "3.0.10",
-  "main": "./dist/ovh-angular-jsplumb.js",
+  "version": "3.0.11",
+  "main": "./dist/angular-jsplumb2.js",
   "license": "BSD-3-Clause",
-  "author": "OVH SAS",
+  "author": "Olivier Béraud",
   "ignore": [
     "components",
     "bower_components",
@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "jquery": "#3.3.1",
-    "lodash": "^3.3.0",
+    "lodash": "^4.17.11",
     "angular": "^1.7.8",
     "angular-sanitize": "^1.7.8",
     "jsplumb": "#1.7.6"

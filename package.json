@@ -1,13 +1,13 @@
 {
-  "name": "ovh-angular-jsplumb",
-  "version": "3.0.10",
+  "name": "angular-jsplumb2",
+  "version": "3.0.11",
   "description": "Allow to draw links between elements using [jsplumb toolkit](http://www.jsplumb.org/).",
   "scripts": {
     "test": "grunt test"
   },
   "license": "BSD-3-Clause",
   "author": "OVH SAS",
-  "main": "./dist/ovh-angular-jsplumb.min.js",
+  "main": "./dist/angular-jsplumb2.min.js",
   "repository": "ovh-ux/ovh-angular-jsplumb.git",
   "devDependencies": {
     "eslint": "^4.1.1",

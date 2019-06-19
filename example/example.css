@@ -2,90 +2,188 @@ body {
     margin: 0;
 }
 
-.action-container {
-    margin: 15px;
+.schema-container {
+	height: calc(100vh);
+	overflow: auto;
+	position: relative;
 }
 
-.endpoints-container li {
-    list-style-type: none;
-    margin: 10px;
-    display: block;
-    padding: 5px 15px;
-    position: relative;
+.schema-container > .schema-editor {
+	background: white url(img/grid25.png) repeat;
+	margin: 0;
+	font-family: Helvetica, Arial, sans-serif;
+	height: 10000px;
+	width: 10000px;
+	position: relative;
+	user-select: none;
 }
 
-.endpoints-container li .endpoint-container {
-    position: absolute;
-    width: 50px;
-    height: 50px;
+.node {
+	cursor: move;
+	background-color: white;
+	border: 2px solid #999;
+	border-radius: 3px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
+	font-weight: bold;
+	min-width: 75px;
+	padding: 6px 8px;
+	position: absolute;
+	z-index: 4;
 }
 
-.endpoints-container li .endpoint-container .endpoint {
-    width: 16px;
-    height: 16px;
-    border-radius: 10px;
-    background: #ecf0f1;
-    border: 1px solid #7f8c8d;
-    position: absolute;
-    top: 50%;
-    margin-top: -8px;
-    left: 50%;
-    margin-left: -8px;
-    z-index: 10;
+.node.shape-ROUNDRECT {
+	max-height: 36px;
+	border-radius: 18px;
 }
 
-.left-endpoints-container {
-    float: left;
-    padding: 25px;
-    width: 35%;
-    background: #34495e;
-    margin: 15px 3%;
+.node.shape-ELLIPSIS {
+	border-radius: 50%;
+	max-width: 15vh;
 }
 
-.left-endpoints-container li {
-    background: #ecf0f1;
-    height: 75px;
+.node.shape-CIRCLE {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 1em;
+	max-width: 15vh;
+	border-radius: 50%;
+	vertical-align: middle;
+	text-align: center;
 }
 
-.left-endpoints-container li .endpoint-container {
-    right: 0;
-    top: 50%;
-    margin: -25px -25px 0 0;
+.node.shape-CIRCLE:before {
+	content:'';
+	float: left;
+	width: auto;
+	padding-bottom: 100%;
 }
 
-.right-endpoints-container {
-    float: right;
-    padding: 25px;
-    width: 40%;
-    background: #95a5a6;
-    margin: 15px 3%;
+.node .lib {
+	display: block;
+	text-align: center;
+	max-width: 160px;
 }
 
-.right-endpoints-container li {
-    background: #2ecc71;
+.node > .nodeConnect {
+	display: none;
+	background: orange;
+	color: white;
+	right: 4px;
+	top: 4px;
+	position: absolute;
 }
 
-.right-endpoints-container li .endpoint-container {
-    left: 0;
-    top: 50%;
-    margin: -25px 0 0 -25px;
+.node:hover > .nodeConnect {
+	display: inline-block;
 }
 
-.bottom-events {
-    padding: 10px;
-    width: 100%;
-    height: 200px;
-    border-top: 1px solid;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    overflow: auto;
+.node.readonly {
+	background: #aef4e7;
 }
 
-._jsPlumb_connector {
-    z-index: 5;
+.link {
+	background-color: #286090;
+	border-radius: 4px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
+	color: white;
+	cursor: pointer;
+	font-size: 12px;
+	padding: 1px 4px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	text-align: center;
+	user-select: none;
 }
 
-._jsPlumb_endpoint {
-    z-index: 10;
+.link .linker {
+	font-size: 11px;
+	display: block;
 }
+
+.link .nom {
+	font-size: 9px;
+	display: block;
+}
+
+.link .card {
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.link._jsPlumb_hover {
+	background-color: #1e8151;
+	color: white;
+}
+
+.link.link-readonly {
+	background-color: #77797B;
+}
+
+svg.kn-link-color-default path {
+	stroke: black;
+}
+
+svg.kn-link-color-default path:nth-child(2) {
+	fill: black;
+}
+
+svg.kn-link-color-muted path {
+	stroke: #999;
+}
+
+svg.kn-link-color-muted path:nth-child(2) {
+	fill: #999;
+}
+
+svg.kn-link-color-primary path {
+	stroke: #286090;
+}
+
+svg.kn-link-color-primary path:nth-child(2) {
+	fill: #286090;
+}
+
+svg.kn-link-color-success path {
+	stroke: #5cb85c;
+}
+
+svg.kn-link-color-success path:nth-child(2) {
+	fill: #5cb85c;
+}
+
+svg.kn-link-color-info path {
+	stroke: #38A7DA;
+}
+
+svg.kn-link-color-info path:nth-child(2) {
+	fill: #38A7DA;
+}
+
+svg.kn-link-color-danger path {
+	stroke: #d9534f;
+}
+
+svg.kn-link-color-danger path:nth-child(2) {
+	fill: #d9534f;
+}
+
+svg.kn-link-color-warning path {
+	stroke: #f0ad4e;
+}
+
+svg.kn-link-color-warning path:nth-child(2) {
+	fill: #f0ad4e;
+}
+
+svg.kn-link-dash-0 path:first-child { stroke-dasharray: 0; }
+svg.kn-link-dash-1 path:first-child { stroke-dasharray: 1; }
+svg.kn-link-dash-2 path:first-child { stroke-dasharray: 2; }
+svg.kn-link-dash-3 path:first-child { stroke-dasharray: 3; }
+svg.kn-link-dash-4 path:first-child { stroke-dasharray: 4; }
+svg.kn-link-dash-5 path:first-child { stroke-dasharray: 5; }
+
+svg.kn-link-width-1 path:first-child { stroke-width: 1; }
+svg.kn-link-width-2 path:first-child { stroke-width: 2; }
+svg.kn-link-width-3 path:first-child { stroke-width: 5; }

@@ -1,227 +1,393 @@
-'use strict';
+/* eslint-disable no-console,no-underscore-dangle */
+"use strict";
 
-angular.module('ovh-angular-jsplumb-test', [
-    'ovh-angular-jsplumb',
-    'jquery-ui-sortable-ng'
-]).controller('mainController', function ($scope, jsPlumbService) {
+angular.module("angular-jsplumb2-test", [
+	"angular-jsplumb2",
+	"ui.bootstrap"
+])
+	.controller("mainController", function ($scope, $http, $timeout, jsPlumbService) {
+		const self = this;
+		const GRID = 25;
+		const schemaSourceParams = {
+			allowLoopback: true,
+			anchor: "Continuous",
+			connector: [
+				"Straight"
+			],
+			endpoint: "Dot",
+			filter: ".nodeConnect",
+			isSource: true,
+			maxConnections: 1000,
+			onMaxConnections (info) {
+				console.error(`Maximum connections (${info.maxConnections}) reached`);
+			}
+		};
+		const schemaTargetParams = {
+			allowLoopback: true,
+			anchor: "Continuous",
+			dropOptions: {
+				hoverClass: "dragHover"
+			},
+			endpoint: "Dot",
+			isTarget: true
+		};
+		const RelationsList = {
+			"KEPLER_RELATION;REPRE_BY": {
+				nom: "represented_by"
+			},
+			"KEPLER_RELATION;IS_A": {
+				nom: "is_a"
+			},
+			"KEPLER_RELATION;DEFINED_BY": {
+				nom: "defined_by"
+			},
+			"KEPLER_RELATION;COMPOSED_OF": {
+				nom: "composed_of"
+			},
+			"KEPLER_RELATION;ELEMENT_OF": {
+				nom: "element_of"
+			},
+			"KEPLER_RELATION;INHERITS": {
+				nom: "inherits"
+			},
+			"KEPLER_RELATION;ARCHIVE_DE": {
+				nom: "archive de"
+			},
+			"KEPLER_RELATION;TO_EXTENSION": {
+				nom: "TO_EXTENSION"
+			},
+			"KEPLER_RELATION;WF_IS": {
+				nom: "WF_IS"
+			},
+			"KEPLER_RELATION;WF_STATEOF": {
+				nom: "WF_STATEOF"
+			},
+			"KEPLER_RELATION;WF_ACTION": {
+				nom: "WF_ACTION"
+			},
+			"KEPLER_RELATION;WF_CURRENTSTATE": {
+				nom: "WF_CURRENTSTATE"
+			},
+			"KEPLER_RELATION;WF_AFFECT": {
+				nom: "WF_AFFECT"
+			},
+			"KEPLER_RELATION;SET_OF": {
+				nom: "set_of"
+			},
+			"KEPLER_RELATION;HAVE": {
+				nom: "have"
+			},
+			"KEPLER_RELATION;SET_DEFAULT": {
+				nom: "set_default"
+			},
+			"KEPLER_RELATION;COMPONENT_OF": {
+				nom: "component_of"
+			}
+		}
+		;
 
-    var self = this,
-        jsplumbInstance = null,
-        sortInterval = null;
+		let
+			jsplumbInstance = null;
 
-    this.events = [];
-    this.endpoints = {
-        left : {
-            keys : [],
-            items : {}
-        },
-        right : {
-            keys : [],
-            items : {}
-        }
-    };
+		$scope.tab = {
+			jspReady: false,
+			loading: false,
+			schema: {
+				name: null,
+				nodes: [],
+				links: []
+			},
+			jspOptions: {
+				Endpoint: [
+					"Dot",
+					{
+						cssClass: "endpoint",
+						radius: 8
+					}
+				],
+				Connector: "Straight",
+				ConnectionOverlays: [
+					[
+						"PlainArrow",
+						{
+							id: "arrow",
+							length: 9,
+							location: 1
+						}
+					],
+					[
+						"Label",
+						{
+							cssClass: "link",
+							id: "label",
+							label: "Nouveau lien"
+						}
+					]
+				],
+				Container: angular.element(".schema-editor").get(0),
+				DuplicateConnectionsAllowed: true
+			}
+		};
 
-    this.instanceOptions = {
-        PaintStyle : { lineWidth : 4, strokeStyle : "#16a085" },
-        HoverPaintStyle : { lineWidth : 8, strokeStyle : "#16a085" },
-        MaxConnections : -1     // unlimited number of connections
-    };
+		this.getNodeIdFromKid = function (kid) {
+			let key = null;
+			angular.forEach($scope.tab.schema.nodes, (node) => {
+				if (node.kid === kid) {
+					key = node.id;
+				}
+			});
+			return key;
+		};
 
-    this.endpointOptions = {
-        left : {
-            source : {
-                endpoint : ['Blank', { cssClass : 'left-source' }],
-                anchor : [0.5, 0.5, 1, 0],
-                filter : '.endpoint'
-            },
-            target : {
-                endpoint : ['Blank', { cssClass : 'left-target' }],
-                anchor : [0.5, 0.5, 1, 0],
-                dropOptions : {
-                    accept : '.right-source'
-                }
-            }
-        },
-        right : {
-            source : {
-                endpoint : ['Blank', { cssClass : 'right-source' }],
-                anchor : [0.5, 0.5, -1, 0],
-                filter : '.endpoint'
-            },
-            target : {
-                endpoint : ['Blank', { cssClass : 'right-target' }],
-                anchor : [0.5, 0.5, -1, 0],
-                dropOptions : {
-                    accept : '.left-source'
-                }
-            }
-        }
-    };
+		this.addLinkIsa = function (node) {
+			/** @namespace node.objtype */
+			if (node.objtype === "OBJECT") {
+				const tmpLink = {
+					type: "KEPLER_RELATION;IS_A",
+					style: {
+						color: "muted",
+						dash: 5,
+						width: 2
+					}
+				};
+				angular.forEach($scope.tab.schema.nodes, (node2) => {
+					if (node2.kid === node.isa) {
+						const connection = jsplumbInstance.connect({
+							source: `kn-node-${node.id}`,
+							target: `kn-node-${self.getNodeIdFromKid(node2.kid)}`,
+							connector: "Straight",
+							cssClass: self.getLinkCSS(tmpLink),
+							anchors: ["Continuous"]
+						});
+						if (connection) {
+							connection.getOverlay("label")
+								.setLabel(self.getLinkName(tmpLink));
+							angular.element(connection.getOverlay("label").canvas)
+								.addClass("link-readonly");
+						}
+					}
+				});
+			}
 
-    this.loader = {
-        jsplumb : true
-    };
+		};
 
-    this.init = function () {
-        jsPlumbService.jsplumbInit().then(function () {
-            self.loader.jsplumb = false;
-            self.events.push(new Date().toISOString() + ' : jsplumb is initialized');
-        });
+		this.getLinkCSS = function (link) {
+			return [
+				"kn-link",
+				`kn-link-color-${link.style.color}`,
+				`kn-link-dash-${link.style.dash}`,
+				`kn-link-width-${link.style.width}`
+			].join(" ");
+		};
 
-        pushEndpoint(this.endpoints.left, {
-            label : 'Endpoint L1',
-            id : 'l1',
-            connections : ['r1', 'r4'],
-            enabled : true
-        });
+		this.getLinkName = function (link) {
+			let name = "";
+			if (link.type !== null && link.type in RelationsList) {
+				name = RelationsList[link.type].nom;
+			}
+			if (link.type !== "KEPLER_RELATION;IS_A") {
+				name += `${" ("}${link.from.card === 999999999 ? "N" : link.from.card},${link.to.card === 999999999 ? "N" : link.to.card})`;
+			}
 
-        pushEndpoint(this.endpoints.left, {
-            label : 'Endpoint L2',
-            id : 'l2',
-            connections : ['r3', 'r4'],
-            enabled : true
-        });
+			const $div = angular.element("<div/>");
 
-        pushEndpoint(this.endpoints.right, {
-            label : 'Endpoint R1',
-            id : 'r1',
-            connections : ['l1'],
-            enabled : true
-        });
+			if (link.linker && link.linker.kid !== "0") {
+				$div.append(angular.element("<span/>")
+					.addClass("linker")
+					.text(link.linker.name));
+			}
 
-        pushEndpoint(this.endpoints.right, {
-            label : 'Endpoint R2',
-            id : 'r2',
-            connections : [],
-            enabled : true
-        });
+			$div.append(angular.element("<span/>")
+				.addClass("nom")
+				.text(name));
+			if (link.readOnly) {
+				$div.addClass("readOnly");
+			}
+			return $div.html();
+		};
 
-        pushEndpoint(this.endpoints.right, {
-            label : 'Endpoint R3',
-            id : 'r3',
-            connections : ['l2'],
-            enabled : true
-        });
 
-        pushEndpoint(this.endpoints.right, {
-            label : 'Endpoint R4',
-            id : 'r4',
-            connections : ['l1', 'l2'],
-            enabled : true
-        });
-    };
+		$scope.getName = function (node) {
+			let value = null;
+			angular.forEach(node.repre, (repre) => {
+				if (repre.lang.kid === "K_NODE;UNIVERSEL") {
+					value = repre.value;
+				}
+			});
 
-    this.action1 = function () {
-        var sourceItem = this.endpoints.left.items['l1'],
-            targetItem = this.endpoints.right.items['r2'];
+			if (!value) {
+				angular.forEach(node.repre, (repre) => {
+					if (repre.lang.isa === "K_NODE;LANGUE" && repre.lang.kid === "K_NODE;FRANCAIS") {
+						value = repre.value;
+					}
+				});
+			}
 
-        sourceItem.connections.push(targetItem.id);
-        targetItem.connections.push(sourceItem.id);
-    };
+			if (!value) {
+				angular.forEach(node.repre, (repre) => {
+					if (repre.lang.isa === "K_NODE;LANGUE") {
+						value = repre.value;
+					}
+				});
+			}
 
-    this.action2 = function () {
-        this.endpoints.right.items['r2'].enabled = !this.endpoints.right.items['r2'].enabled;
-    };
+			if (!value) {
+				angular.forEach(node.repre, (repre) => {
+					if (!value) {
+						value = repre.value;
+					}
+				});
+			}
 
-    this.action3 = function () {
-        // remove r3 key from right keys endpoints
-        _.remove(self.endpoints.right.keys, function (key) {
-            return key === 'r3';
-        });
-        delete self.endpoints.right.items['r3'];
-        // update left endpoints connections by removing r3 from connections list
-        angular.forEach(this.endpoints.left.items, function (item) {
-            if (item.connections && item.connections.length && item.connections.indexOf('r3') >= 0) {
-                item.connections.splice(item.connections.indexOf('r3'), 1);
-            }
-        });
-    };
+			return value;
+		};
 
-    function pushEndpoint (hash, endpoint) {
-        hash.keys.push(endpoint.id);
-        hash.items[endpoint.id] = endpoint;
-    }
+		this.init = function () {
+			jsPlumbService.jsplumbInit()
+				.then(() => {
+					console.log(`${new Date().toISOString()} : jsplumb is initialized`);
+					$scope.tab.jspReady = true;
+					$timeout(() => {
+						self.display();
+					});
+				});
+		};
 
-    /********************************************/
-    /*             JSPLUMB EVENTS               */
-    /********************************************/
+		this.display = function () {
+			// suspend drawing and initialise.
+			const $schemaEditor = angular.element(".schema-editor");
+			const $nodeList = $schemaEditor.find(".node");
 
-    $scope.$on('jsplumb.instance.created', function (evt, instance) {
-        self.events.push(new Date().toISOString() + ' : jsplumb instance is created');
-        jsplumbInstance = instance;
-    });
+			jsplumbInstance.bind("beforeDetach", (e) => {
+				console.log(e);
+				return true;
+			});
+			jsplumbInstance.bind("beforeDrop", (e) => {
+				console.log(e);
+				return true;
+			});
 
-    $scope.$on('jsplumb.endpoint.created', function (evt, endpointId, connectionIds, instance) {
-        if (instance.isSource(endpointId) && instance.isTarget(endpointId)) {
-            self.events.push(new Date().toISOString() + ' : jsplumb endpoint ' + endpointId + ' is created as source and target');
-        } else if (instance.isSource(endpointId)) {
-            self.events.push(new Date().toISOString() + ' : jsplumb endpoint ' + endpointId + ' is created as source');
-        } else if (instance.isTarget(endpointId)) {
-            self.events.push(new Date().toISOString() + ' : jsplumb endpoint ' + endpointId + ' is created as target');
-        }
-    });
+			// mettre à jour la position x/y en cas de déplacement
+			jsplumbInstance.draggable($nodeList, {
+				containment: $schemaEditor,
+				stop (e) {
+					console.log(e);
+				},
+				disabled: false,
+				snapThreshold: 13,
+				grid: [
+					GRID,
+					GRID
+				]
+			});
+			jsplumbInstance.setDraggable($nodeList, true);
 
-    $scope.$on('jsplumb.instance.connection', function (evt, connection, sourceEndpoint, targetEndpoint, instance, originalEvent) {
-        self.events.push(new Date().toISOString() + ' : jsplumb connection has been created between ' + connection.sourceId + ' and ' + connection.targetId);
-        if (originalEvent) {
-            if (self.endpoints.left.items[connection.sourceId]) {
-                self.endpoints.left.items[connection.sourceId].connections.push(connection.targetId);
-                self.endpoints.right.items[connection.targetId].connections.push(connection.sourceId);
-            } else if (self.endpoints.right.items[connection.sourceId]) {
-                self.endpoints.right.items[connection.sourceId].connections.push(connection.targetId);
-                self.endpoints.left.items[connection.targetId].connections.push(connection.sourceId);
-            }
+			if ($nodeList.length > 0) {
+				jsplumbInstance.batch(() => {
+					jsplumbInstance.makeSource($nodeList, schemaSourceParams);
+					jsplumbInstance.makeTarget($nodeList, schemaTargetParams);
+					const linksToDelete = [];
+					let connection;
+					let source;
+					let target;
+					angular.forEach($scope.tab.schema.links, (link, k) => {
 
-        }
-    });
+						source = target = "kn-node-";
 
-    $scope.$on('jsplumb.instance.connection.click', function (evt, connection) {
-        self.events.push(new Date().toISOString() + ' : jsplumb connection between ' + connection.sourceId + ' and ' + connection.targetId + ' has been clicked');
+						if ("id" in link.from) {
+							source += link.from.id;
+						} else {
+							source += self.getNodeIdFromKid(link.from.kid);
+						}
 
-        if (self.endpoints.left.items[connection.sourceId]) {
-            _.remove(self.endpoints.left.items[connection.sourceId].connections, function (conn) {
-                return conn === connection.targetId;
-            });
+						if ("id" in link.to) {
+							target += link.to.id;
+						} else {
+							target += self.getNodeIdFromKid(link.to.kid);
+						}
 
-            _.remove(self.endpoints.right.items[connection.targetId].connections, function (conn) {
-                return conn === connection.sourceId;
-            });
-        } else if (self.endpoints.right.items[connection.sourceId]) {
-            _.remove(self.endpoints.right.items[connection.sourceId].connections, function (conn) {
-                return conn === connection.targetId;
-            });
+						connection = jsplumbInstance.connect({
+							scope: link.id,
+							source,
+							target,
+							connector: link.style.type,
+							cssClass: self.getLinkCSS(link),
+							anchors: ["Continuous"]
+						});
+						if (connection) {
+							connection.getOverlay("label")
+								.setLabel(self.getLinkName(link));
+							$scope.tab.schema.links[k]._connection = connection;
+						} else {
+							linksToDelete.push(k);
+						}
 
-            _.remove(self.endpoints.left.items[connection.targetId].connections, function (conn) {
-                return conn === connection.sourceId;
-            });
-        }
+						if (linksToDelete.length > 0) {
+							let index = $scope.tab.schema.links.length - 1;
+							while (index >= 0) {
+								if (linksToDelete.indexOf(index) >= 0) {
+									$scope.tab.schema.links.splice(index, 1);
+									self.edit = true;
+								}
+								index -= 1;
+							}
+						}
+					});
+				});
+				angular.forEach($scope.tab.schema.nodes, (node) => {
+					self.addLinkIsa(node);
+				});
 
-    });
+			}
+		};
 
-    $scope.$on('jsplumb.instance.connection.detached', function (evt, connection) {
-        self.events.push(new Date().toISOString() + ' : jsplumb connection between ' + connection.sourceId + ' and ' + connection.targetId + ' has been detached');
-    });
 
-    /********************************************/
-    /*             SORTABLE EVENTS              */
-    /********************************************/
+		/********************************************/
+		/*             JSPLUMB EVENTS               */
+		/********************************************/
 
-    function redrawConnections () {
-        jsplumbInstance.repaintEverything();
-    }
+		$scope.$on("jsplumb.instance.created", (evt, instance) => {
+			console.log(`${new Date().toISOString()} : jsplumb instance is created`);
+			jsplumbInstance = instance;
+			console.log("version", jsplumbInstance.version);
+			jsplumbInstance.connectorClass = "kn-link-color-default kn-link-dash-0 kn-link-width-2";
+			self.load();
+		});
 
-    $scope.$on('ui.sortable.start', function () {
-        if (!sortInterval) {
-            sortInterval = window.setInterval(redrawConnections, 99);
-        }
-    });
+		$scope.$on("jsplumb.instance.connection", (evt, connection) => {
+			console.log(`${new Date().toISOString()} : jsplumb connection has been created between ${connection.sourceId} and ${connection.targetId}`);
+		});
 
-    $scope.$on('ui.sortable.stop', function () {
-        clearInterval(sortInterval);
-        sortInterval = null;
-        jsplumbInstance.repaintAndRevalidateEverything();
-    });
+		$scope.$on("jsplumb.instance.connection.click", (evt, connection) => {
+			console.log(`${new Date().toISOString()} : jsplumb connection between ${connection.sourceId} and ${connection.targetId} has been clicked`);
+		});
 
-    this.init();
+		$scope.$on("jsplumb.instance.connection.detached", (evt, connection) => {
+			console.log(`${new Date().toISOString()} : jsplumb connection between ${connection.sourceId} and ${connection.targetId} has been detached`);
+		});
 
-});
+		this.load = function () {
+			$scope.tab.loading = true;
+			$http.get("test5.json")
+				.then((kjson) => {
+					console.log(kjson);
+					$scope.tab.schema.name = kjson.data.info.name;
+					angular.forEach(kjson.data.nodes || {}, (node, objnum) => {
+						if (!("objnum" in node) || /^K_NODE;/.test(objnum)) {
+							node.objnum = objnum;
+						}
+						$scope.tab.schema.nodes.push(node);
+					});
+					angular.forEach(kjson.data.links || {}, (link, klink) => {
+						if (!("link" in link) || /^KLINK;/.test(klink)) {
+							link.link = klink;
+						}
+						$scope.tab.schema.links.push(link);
+					});
+					$scope.tab.loading = false;
+					self.init();
+				});
+		};
+
+
+	});
