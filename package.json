@@ -1,6 +1,6 @@
 {
   "name": "angular-jsplumb2",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "Allow to draw links between elements using [jsPlumb 2.7.x](http://www.jsplumb.org/).",
   "scripts": {
     "test": "grunt test"
