@@ -1,7 +1,7 @@
 {
   "name": "ovh-angular-jsplumb",
   "description": "",
-  "version": "3.0.8",
+  "version": "3.0.10",
   "main": "./dist/ovh-angular-jsplumb.js",
   "license": "BSD-3-Clause",
   "author": "OVH SAS",
@@ -18,14 +18,14 @@
     "example"
   ],
   "dependencies": {
-    "jquery": "^3.3.1",
+    "jquery": "#3.3.1",
     "lodash": "^3.3.0",
-    "angular": "#1.7.3",
-    "angular-sanitize": "^1.7.3",
+    "angular": "^1.7.8",
+    "angular-sanitize": "^1.7.8",
     "jsplumb": "#1.7.6"
   },
   "devDependencies": {
-    "angular-mocks": "^1.4.20",
+    "angular-mocks": "^1.7.8",
     "angular-scenario": "^1.3.0"
   }
 }
